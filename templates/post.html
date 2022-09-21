@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>MY Blog{{user}}</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="static/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="index">回到主頁</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="post">Post</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about">About</a></li>
+                        {% if userStatus == 0%}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="login">Login</a></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="logout">Logout</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('static/img/post-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1 style="color: white">MY Blog</h1>
+                            <h2 class="subheading">~這裡存放我寫的小文章~</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <h4>文章部落格</h4>
+                        <form method="post">
+                            <button type="submit" name="lastest">最新</button>
+                            <button type="submit" name="oldest">最舊</button>
+                            {% if username %}
+                            <button type="submit" name="onlyme">只看我的文章</button>
+                            {% endif %}
+                        </form>
+                     <!-- create-->
+                    {% if username %}
+                    <div class="d-flex justify-content-end mb-4"><button class="btn btn-primary text-uppercase" id="show">Create New Post</button></div>
+                    {% endif %}
+                    <dialog id="infoModal">
+                        <div class="closebtn"><button id="close" >X</button></div>
+                        <h2>新增文章</h2>
+                     <form method="post">
+                        <p><input type="text" name="a-title" class="create-width" placeholder="標題" required="required"></p>
+                        <p><textarea name="a-text" class="create-width create-height" placeholder="內文" required></textarea></p>
+                        <p><input type="submit" class="createBtn" name="createNew" value="發布">       作者：{{username}} </p>
+                     </form>
+
+                    </dialog>
+
+                    <!-- Post preview-->
+                    {% for article in articleList %}
+                    <div class="post-preview">
+                        <!--文章整體-->
+                        {% if article.visible == 0 %}
+                        <a href=post/article{{article.id}}>
+                            <h2 class="post-title">{{article.title}}</h2>
+                        </a>
+                        <h4 class="post-subtitle a-text">{{article.text}}</h4>
+                        <p class="post-meta">作者:{{article.author}} 　　　 {{article.time}}</p>
+
+                        {% elif article.visible == 1 %}
+                            {% if article.author == username %}
+                                <a href=post/article{{article.id}}>
+                                    <h2 class="post-title">{{article.title}}(已隱藏)</h2>
+                                </a>
+                                <h4 class="post-subtitle">{{article.text}}</h4>
+                                <p class="post-meta">作者:{{article.author}} 　　　 {{article.time}}</p>
+                            {% endif %}
+                        {% endif %}
+                            {% if article.author == username %}
+                                <!--使用者操作按鈕-->
+
+                                <button name="edit" value="{{article.id}}" onclick="editArticle{{article.id}}.showModal()">編輯</button>
+
+                                    <!--彈出編輯視窗-->
+                                    <dialog id="editArticle{{article.id}}">
+                                            <div class="closebtn"><button onclick="editArticle{{article.id}}.close()" >X</button></div>
+                                         <form method="post">
+                                             <h2>修改文章</h2>  <input name="a-id" value="{{article.id}}" hidden="hidden">
+                                            <p><input type="text" name="a-title" class="create-width" placeholder="標題" value="{{article.title}}" required="required"></p>
+                                            <p><textarea name="a-text" class="create-width create-height" placeholder="內文" required>{{article.text}}</textarea></p>
+                                            <p><button type="submit" name="editarticle" value="{{article.id}}">修改</button>    作者：{{username}} </p>
+                                         </form>
+
+                                        </dialog>
+                                <form method="post">
+                                <button type="submit" class="deleteBtn" name="delete" value="{{article.id}}">刪除</button>
+                                {% if article.visible == 0 %}
+                                <button type="submit" name="hide" value="{{article.id}}">隱藏</button>
+                                {% elif article.visible == 1 %}
+                                <button type="submit" name="unhide" value="{{article.id}}">解除隱藏</button>
+                                {% endif %}
+                                </form>
+                            {% endif %}
+                    </div>
+                    {% if article.visible == 0 %}
+                    <hr size="6px" align="center" width="100%">
+                    {% elif article.visible == 1 and article.author == username %}
+                    <hr size="6px" align="center" width="100%">
+                    {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://github.com/TeddyWu1226">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <!--網站模板來源:https://startbootstrap.com/theme/clean-blog-->
+                        <div class="small text-center text-muted fst-italic">本網站原始碼改編自網上免費網頁模板，僅供個人學習使用 </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="static/scripts.js"></script>
+    </body>
+</html>
