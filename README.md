@@ -3,6 +3,8 @@
 
 本專案使用模板來源:https://startbootstrap.com/theme/clean-blog 其html、圖片、CSS、JS檔案均修改於網址內提供之檔案。
 
+部落格操作可至我的作品集中觀看影片介紹:https://drive.google.com/drive/folders/1cIMorYPhNJDTZgAwW67CQdyf62JNiRhA?usp=sharing
+
 一、專案介紹:
 
 本專案主要設計為五頁-主頁、部落格頁、個人資料頁、登入頁、文章頁
